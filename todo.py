@@ -4,12 +4,12 @@ import os        #For OS operations
 
 #Here we have to set up the argument Parser
 """We gonna be using CL flags to add, list and remove tasks. 
-   let's manage to use both short and long options for each argument
-   + '-a' or '--add' to add tasks
-   +'-l' or '--list' to list all tasks
-   +'-r' or '--remove' to remove tasks using index   
+let's manage to use both short and long options for each argument
++ '-a' or '--add' to add tasks
++'-l' or '--list' to list all tasks
++'-r' or '--remove' to remove tasks using index   
 
-   By leveraging argparse module to parse the arguments provided at the command line
+By leveraging argparse module to parse the arguments provided at the command line
 """
 
 #Adding arguments to Create_parser() function plus their corresponding help message
@@ -30,37 +30,54 @@ def create_parser():
     Let's keep hacking *_*
     """
 
+# Configuration
+TASKS_FILE = "tasks.txt"  # Can be modified or loaded from environment/config
+
 def add_task(task): 
-    #To interact with simple text file in 'append mode' to add tasks
-    with open("tasks.txt", "a") as file:
-        file.write(task +"\n")
-    #Using 'with' statement to manage file
-    
+    try:
+        with open(TASKS_FILE, "a") as file:
+            file.write(task + "\n")
+    except IOError as e:
+        print(f"Error adding task: {e}")
+        raise
+
 def list_tasks(task):
-    #For listing all the tasks and check file existence
-    #Firstly we have to check for the file
-    if os.path.exists("tasks.txt"):
-        with open("tasks.txt", "r") as file:
-            tasks = file.readlines()
-            for index, task in enumerate(tasks, start=1):
-                print(f"{index}.{task.strip}")
-                
-    else:
-        print("No tasks found.")
+    try:
+        if os.path.exists(TASKS_FILE):
+            with open(TASKS_FILE, "r") as file:
+                tasks = file.readlines()
+                for index, task in enumerate(tasks, start=1):
+                    print(f"{index}.{task.strip()}")
+        else:
+            print(f"Tasks file {TASKS_FILE} does not exist")
+    except IOError as e:
+        print(f"Error reading tasks: {e}")
+        raise
         
 def remove_task(index):
-    #After also checking the file existence, we open file in
-    #write mode to overwrites the existing file
-    if os.path.exists("tasks.txt"):
-        with open("tasks.txt", "r") as file:
-            tasks = file.readlines()
-        with open("tasks.txt","w") as file:
+    """Removes a task by its index after validating the index and file existence."""
+
+    try:
+        index = int(index)  # Convert index to integer and validate
+    except ValueError:
+        print("Invalid index. Please provide an integer.")
+        return
+
+    if not os.path.exists("tasks.txt"):
+        print("No tasks found.")
+        return
+
+    with open("tasks.txt", "r") as file:
+        tasks = file.readlines()
+
+    if 1 <= index <= len(tasks):  # Check if the index is within the valid range
+        with open("tasks.txt", "w") as file:
             for i, task in enumerate(tasks, start=1):
                 if i != index:
                     file.write(task)
-                    print("Task removed successfully")
-                    
-                else:
-                    print("No task found")
-                    
+        print(f"Task {index} removed successfully.") # Success message after removal
+    else:
+        print(f"Task {index} not found.") # Failure message if task not found
+
+
                     
