@@ -2,8 +2,8 @@
 import argparse  #For CL argument parsing
 import os        #For OS operations
 
-"""Here we have to set up the argument Parser
-   We gonna be using CL flags to add, list and remove tasks. 
+#Here we have to set up the argument Parser
+"""We gonna be using CL flags to add, list and remove tasks. 
    let's manage to use both short and long options for each argument
    + '-a' or '--add' to add tasks
    +'-l' or '--list' to list all tasks
