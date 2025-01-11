@@ -1,4 +1,4 @@
-"""Importing all necessary modules"""
+"""Importing the modules"""
 import argparse  #For CL argument parsing
 import os        #For OS operations
 
@@ -30,12 +30,9 @@ def create_parser():
     Let's keep hacking *_*
     """
 
-# Configuration
-TASKS_FILE = "tasks.txt"  # Can be modified or loaded from environment/config
-
 def add_task(task): 
     try:
-        with open(TASKS_FILE, "a") as file:
+        with open("tasks.txt", "a") as file:
             file.write(task + "\n")
     except IOError as e:
         print(f"Error adding task: {e}")
@@ -43,41 +40,29 @@ def add_task(task):
 
 def list_tasks(task):
     try:
-        if os.path.exists(TASKS_FILE):
-            with open(TASKS_FILE, "r") as file:
+        if os.path.exists("tasks.txt"):
+            with open("tasks.txt", "r") as file:
                 tasks = file.readlines()
                 for index, task in enumerate(tasks, start=1):
-                    print(f"{index}.{task.strip()}")
+                    print(f"{index}. {task.strip()}")
         else:
-            print(f"Tasks file {TASKS_FILE} does not exist")
+            print("No tasks found.")
     except IOError as e:
         print(f"Error reading tasks: {e}")
         raise
         
 def remove_task(index):
     """Removes a task by its index after validating the index and file existence."""
-
-    try:
-        index = int(index)  # Convert index to integer and validate
-    except ValueError:
-        print("Invalid index. Please provide an integer.")
-        return
-
-    if not os.path.exists("tasks.txt"):
-        print("No tasks found.")
-        return
-
-    with open("tasks.txt", "r") as file:
-        tasks = file.readlines()
-
-    if 1 <= index <= len(tasks):  # Check if the index is within the valid range
+    if os.path.exists("tasks.txt"):
+        with open("tasks.txt", "r") as file:
+            tasks = file.readlines()
         with open("tasks.txt", "w") as file:
             for i, task in enumerate(tasks, start=1):
                 if i != index:
                     file.write(task)
-        print(f"Task {index} removed successfully.") # Success message after removal
+        print("Task removed successfully.")
     else:
-        print(f"Task {index} not found.") # Failure message if task not found
+        print("No tasks found.") # Failure message if task not found
 
 
 #Setting the parser tp parse CL arguments by calling them ASAP
@@ -89,7 +74,7 @@ def main():
         add_task(args.add)
     elif args.list:
         list_tasks()
-    elif args.remove():
+    elif args.remove:
         remove_task(int(args.remove))
     
     else:
